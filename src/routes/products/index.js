@@ -60,7 +60,6 @@ productsRoute.post("/", async (req, res, next) => {
       product,
       price,
       quantity,
-      disponibility: req.body.quantity > 0 ? "available" : "not available",
     }).save();
 
     res.status(201).send(productToPost);
