@@ -24,8 +24,10 @@ productsRoute.get("/:id", async (req, res, next) => {
   try {
     const product = await ProductsSchema.findById(req.params.id);
     const selectedProduct = {
-      name: product.product,
+      id: product._id,
+      product: product.product,
       price: product.price,
+      quantity: product.quantity,
       disponibility: product.quantity > 0 ? true : false,
     };
 
