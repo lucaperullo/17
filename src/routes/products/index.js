@@ -7,6 +7,7 @@ productsRoute.get("/", async (req, res, next) => {
   try {
     const products = await ProductsSchema.find();
     const productsList = products.map((product) => ({
+      id: product._id,
       product: product.product,
       price: product.price,
       quantity: product.quantity,
@@ -39,13 +40,13 @@ productsRoute.get("/:id", async (req, res, next) => {
 
 productsRoute.put("/:id", async (req, res, next) => {
   try {
-    const product = await ProductsSchema.findByIdAndUpdate(
+    const { product, price, quantity } = req.body;
+    const editedProduct = await ProductsSchema.findByIdAndUpdate(
       req.params.id,
-      req.body
+      { product, price, quantity }
     );
-    // product.disponibility = req.body.quantity > 0 ? true : false;
-    // product.save();
-    res.status(202).send(product);
+
+    res.status(202).send(editedProduct);
   } catch (error) {
     console.log(error);
     next(error);
@@ -54,12 +55,15 @@ productsRoute.put("/:id", async (req, res, next) => {
 
 productsRoute.post("/", async (req, res, next) => {
   try {
-    const product = await new ProductsSchema({
-      ...req.body,
-      disponibility: req.body.quantity > 0 ? true : false,
+    const { product, price, quantity } = req.body;
+    const productToPost = await new ProductsSchema({
+      product,
+      price,
+      quantity,
+      disponibility: req.body.quantity > 0 ? "available" : "not available",
     }).save();
 
-    res.status(201).send(product);
+    res.status(201).send(productToPost);
   } catch (error) {
     console.log(error);
     next(error);

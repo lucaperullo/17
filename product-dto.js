@@ -9,12 +9,14 @@
 //a specific product from the database and return it as a json object to the client
 
 //HOW TO CREATE A NEW PRODUCT
-//Performing a post request to /products add a new product
+//Performing a post request to /products adds a new product
 //to the database and return the product list as a json object to the client
+//ACCEPTED PARAMS : product, price, quantity
 
 //HOW TO UPDATE A PRODUCT
 //Performing a put request to /products/:id updates a product
 //in the database and prints the updated product as a json object to the client
+//ACCEPTED PARAMS : product, price, quantity
 
 //HOW TO DELETE ALL THE PRODUCTS
 //Performing a delete request to delete all products from the database
