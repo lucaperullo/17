@@ -27,11 +27,10 @@ productsRoute.put("/:id", async (req, res, next) => {
   try {
     const product = await ProductsSchema.findByIdAndUpdate(
       req.params.id,
-      req.body,
-      {
-        new: true,
-      }
+      req.body
     );
+    product.save();
+    product.disponibility = req.body.quantity > 0 ? true : false;
     res.status(202).send(product);
   } catch (error) {
     console.log(error);
