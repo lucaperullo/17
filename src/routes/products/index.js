@@ -6,7 +6,11 @@ const productsRoute = express.Router();
 productsRoute.get("/", async (req, res, next) => {
   try {
     const products = await ProductsSchema.find();
-    res.send(products);
+    res.send({
+      products: products.map((product) =>
+        product.quantity > 0 ? product : product
+      ),
+    });
   } catch (error) {
     console.log(error);
     next(error);
@@ -16,7 +20,10 @@ productsRoute.get("/", async (req, res, next) => {
 productsRoute.get("/:id", async (req, res, next) => {
   try {
     const product = await ProductsSchema.findById(req.params.id);
-    res.send(product);
+    product.disponibility = product.quantity > 0 ? "available" : "unavailable";
+    res.send({
+      products: [product],
+    });
   } catch (error) {
     console.log(error);
     next(error);
@@ -29,8 +36,8 @@ productsRoute.put("/:id", async (req, res, next) => {
       req.params.id,
       req.body
     );
-    product.save();
-    product.disponibility = req.body.quantity > 0 ? true : false;
+    // product.disponibility = req.body.quantity > 0 ? true : false;
+    // product.save();
     res.status(202).send(product);
   } catch (error) {
     console.log(error);

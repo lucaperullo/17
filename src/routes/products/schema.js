@@ -16,7 +16,8 @@ const ProductSchema = new mongoose.Schema(
     },
     disponibility: {
       type: Boolean,
-      required: true,
+      required: false,
+      select: false,
     },
   },
   { versionKey: false }
