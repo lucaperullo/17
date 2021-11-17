@@ -3,16 +3,17 @@ import ProductsSchema from "./schema";
 
 const productsRoute = express.Router();
 
-productsRoute.get("/", async (req, res) => {
+productsRoute.get("/", async (req, res, next) => {
   try {
     const products = await ProductsSchema.find();
     res.send(products);
   } catch (error) {
     console.log(error);
+    next(error);
   }
 });
 
-productsRoute.put("/:id", async (req, res) => {
+productsRoute.put("/:id", async (req, res, next) => {
   try {
     const product = await ProductsSchema.findByIdAndUpdate(
       req.params.id,
@@ -24,24 +25,27 @@ productsRoute.put("/:id", async (req, res) => {
     res.send(product);
   } catch (error) {
     console.log(error);
+    next(error);
   }
 });
 
-productsRoute.post("/", async (req, res) => {
+productsRoute.post("/", async (req, res, next) => {
   try {
     const product = await ProductsSchema.create(req.body);
     res.send(product);
   } catch (error) {
     console.log(error);
+    next(error);
   }
 });
 
-productsRoute.delete("/:id", async (req, res) => {
+productsRoute.delete("/:id", async (req, res, next) => {
   try {
     const product = await ProductsSchema.findByIdAndDelete(req.params.id);
     res.send("product " + req.params.id + " deleted");
   } catch (error) {
     console.log(error);
+    next(error);
   }
 });
 
