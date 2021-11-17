@@ -13,6 +13,16 @@ productsRoute.get("/", async (req, res, next) => {
   }
 });
 
+productsRoute.get("/:id", async (req, res, next) => {
+  try {
+    const product = await ProductsSchema.findById(req.params.id);
+    res.send(product);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
 productsRoute.put("/:id", async (req, res, next) => {
   try {
     const product = await ProductsSchema.findByIdAndUpdate(
@@ -33,6 +43,16 @@ productsRoute.post("/", async (req, res, next) => {
   try {
     const product = await ProductsSchema.create(req.body);
     res.status(201).send(product);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+productsRoute.delete("/all", async (req, res, next) => {
+  try {
+    await ProductsSchema.deleteMany();
+    res.send({ message: "All products were deleted" });
   } catch (error) {
     console.log(error);
     next(error);
