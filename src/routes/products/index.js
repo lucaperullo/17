@@ -6,11 +6,13 @@ const productsRoute = express.Router();
 productsRoute.get("/", async (req, res, next) => {
   try {
     const products = await ProductsSchema.find();
-    res.send({
-      products: products.map((product) =>
-        product.quantity > 0 ? product : product
-      ),
-    });
+    const productsList = products.map((product) => ({
+      product: product.product,
+      price: product.price,
+      quantity: product.quantity,
+      disponibility: product.quantity > 0 ? "available" : "not available",
+    }));
+    res.send({ products: productsList });
   } catch (error) {
     console.log(error);
     next(error);
@@ -20,9 +22,14 @@ productsRoute.get("/", async (req, res, next) => {
 productsRoute.get("/:id", async (req, res, next) => {
   try {
     const product = await ProductsSchema.findById(req.params.id);
-    product.disponibility = product.quantity > 0 ? "available" : "unavailable";
+    const selectedProduct = {
+      name: product.product,
+      price: product.price,
+      disponibility: product.quantity > 0 ? true : false,
+    };
+
     res.send({
-      products: [product],
+      products: [selectedProduct],
     });
   } catch (error) {
     console.log(error);
