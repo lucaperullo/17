@@ -41,7 +41,11 @@ productsRoute.put("/:id", async (req, res, next) => {
 
 productsRoute.post("/", async (req, res, next) => {
   try {
-    const product = await ProductsSchema.create(req.body);
+    const product = await new ProductsSchema({
+      ...req.body,
+      disponibility: req.body.quantity > 0 ? true : false,
+    }).save();
+
     res.status(201).send(product);
   } catch (error) {
     console.log(error);
