@@ -9,7 +9,7 @@ productsRoute.get("/", async (req, res, next) => {
     const products = await ProductsSchema.find();
     const productsList = products.map((product: ProductDto) => ({
       id: product.id,
-      product: product.name,
+      name: product.name,
       price: product.price,
       quantity: product.quantity,
       disponibility: product.quantity > 0 ? "available" : "out of stock",
@@ -26,7 +26,7 @@ productsRoute.get("/:id", async (req, res, next) => {
     const product = await ProductsSchema.findById(req.params.id);
     const selectedProduct = {
       id: product._id,
-      product: product.name,
+      name: product.name,
       price: product.price,
       quantity: product.quantity,
       disponibility: product.quantity > 0 ? true : false,
@@ -43,10 +43,10 @@ productsRoute.get("/:id", async (req, res, next) => {
 
 productsRoute.put("/:id", async (req, res, next) => {
   try {
-    const { product, price, quantity } = req.body;
+    const { name, price, quantity } = req.body;
     const editedProduct = await ProductsSchema.findByIdAndUpdate(
       req.params.id,
-      { product, price, quantity }
+      { name, price, quantity }
     );
 
     res.status(202).send(editedProduct);
@@ -58,9 +58,9 @@ productsRoute.put("/:id", async (req, res, next) => {
 
 productsRoute.post("/", async (req, res, next) => {
   try {
-    const { product, price, quantity } = req.body;
+    const { name, price, quantity } = req.body;
     const productToPost = await new ProductsSchema({
-      product,
+      name,
       price,
       quantity,
     }).save();
@@ -84,8 +84,6 @@ productsRoute.delete("/all", async (req, res, next) => {
 
 productsRoute.delete("/:id", async (req, res, next) => {
   try {
-    const product = await ProductsSchema.findByIdAndDelete(req.params.id);
-
     const products = await ProductsSchema.find();
     res.send({ message: "product deleted", products: products });
   } catch (error) {
