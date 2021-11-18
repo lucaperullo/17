@@ -1,4 +1,4 @@
-import * as express from "express";
+import express from "express";
 import ProductDto from "./product-dto";
 import ProductsSchema from "./schema";
 
@@ -9,7 +9,7 @@ productsRoute.get("/", async (req, res, next) => {
     const products = await ProductsSchema.find();
     const productsList = products.map((product: ProductDto) => ({
       id: product.id,
-      product: product.product,
+      product: product.name,
       price: product.price,
       quantity: product.quantity,
       disponibility: product.quantity > 0 ? "available" : "out of stock",
@@ -26,7 +26,7 @@ productsRoute.get("/:id", async (req, res, next) => {
     const product = await ProductsSchema.findById(req.params.id);
     const selectedProduct = {
       id: product._id,
-      product: product.product,
+      product: product.name,
       price: product.price,
       quantity: product.quantity,
       disponibility: product.quantity > 0 ? true : false,
