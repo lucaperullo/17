@@ -24,7 +24,7 @@ productsRoute.get("/", async (_req, res, next) => {
 productsRoute.get("/:id", async (req, res, next) => {
   try {
     const product = await ProductsSchema.findById(req.params.id);
-    const selectedProduct = {
+    const selectedProduct: ProductDto = {
       id: product._id,
       name: product.name,
       price: product.price,
@@ -43,7 +43,7 @@ productsRoute.get("/:id", async (req, res, next) => {
 
 productsRoute.put("/:id", async (req, res, next) => {
   try {
-    const { name, price, quantity } = req.body;
+    const { name, price, quantity }: ProductDto = req.body;
     const editedProduct = await ProductsSchema.findByIdAndUpdate(
       req.params.id,
       { name, price, quantity }
@@ -58,7 +58,7 @@ productsRoute.put("/:id", async (req, res, next) => {
 
 productsRoute.post("/", async (req, res, next) => {
   try {
-    const { name, price, quantity } = req.body;
+    const { name, price, quantity }: ProductDto = req.body;
     const productToPost = await new ProductsSchema({
       name,
       price,
@@ -74,9 +74,9 @@ productsRoute.post("/", async (req, res, next) => {
 
 productsRoute.put("/products/:id/add-stock", async (req, res, next) => {
   try {
-    const { quantity } = req.body;
+    const quantity: number = await req.body.quantity;
     const productToUpdate = await ProductsSchema.findById(req.params.id);
-    const newQuantity = productToUpdate.quantity + quantity;
+    const newQuantity: number = productToUpdate.quantity + quantity;
     const updatedProduct = await ProductsSchema.findByIdAndUpdate(
       req.params.id,
       { quantity: newQuantity }
@@ -92,9 +92,9 @@ productsRoute.put("/products/:id/add-stock", async (req, res, next) => {
 productsRoute.put("/:id/sell", async (req, res, next) => {
   try {
     const { quantity } = await ProductsSchema.findById(req.params.id);
-    const desiredQuantity = await req.body.quantity;
-    const newQuantity = quantity - desiredQuantity;
-    const productToPost = await ProductsSchema.findByIdAndUpdate(
+    const desiredQuantity: number = await req.body.quantity;
+    const newQuantity: number = quantity - desiredQuantity;
+    const productToPost: ProductDto = await ProductsSchema.findByIdAndUpdate(
       req.params.id,
       { quantity: newQuantity }
     );
