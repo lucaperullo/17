@@ -4,7 +4,7 @@ import ProductsSchema from "./schema";
 
 const productsRoute = express.Router();
 
-productsRoute.get("/", async (req, res, next) => {
+productsRoute.get("/", async (_req, res, next) => {
   try {
     const products = await ProductsSchema.find();
     const productsList = products.map((product: ProductDto) => ({
@@ -72,7 +72,41 @@ productsRoute.post("/", async (req, res, next) => {
   }
 });
 
-productsRoute.delete("/all", async (req, res, next) => {
+productsRoute.put("/products/:id/add-stock", async (req, res, next) => {
+  try {
+    const { quantity } = req.body;
+    const productToUpdate = await ProductsSchema.findById(req.params.id);
+    const newQuantity = productToUpdate.quantity + quantity;
+    const updatedProduct = await ProductsSchema.findByIdAndUpdate(
+      req.params.id,
+      { quantity: newQuantity }
+    );
+
+    res.status(202).send(updatedProduct);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+productsRoute.put("/:id/sell", async (req, res, next) => {
+  try {
+    const { quantity } = await ProductsSchema.findById(req.params.id);
+    const desiredQuantity = await req.body.quantity;
+    const newQuantity = quantity - desiredQuantity;
+    const productToPost = await ProductsSchema.findByIdAndUpdate(
+      req.params.id,
+      { quantity: newQuantity }
+    );
+
+    res.status(201).send(productToPost);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+productsRoute.delete("/all", async (_req, res, next) => {
   try {
     await ProductsSchema.deleteMany();
     res.send({ message: "All products were deleted" });
@@ -82,7 +116,7 @@ productsRoute.delete("/all", async (req, res, next) => {
   }
 });
 
-productsRoute.delete("/:id", async (req, res, next) => {
+productsRoute.delete("/:id", async (_req, res, next) => {
   try {
     const products = await ProductsSchema.find();
     res.send({ message: "product deleted", products: products });
