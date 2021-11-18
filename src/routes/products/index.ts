@@ -1,13 +1,14 @@
 import * as express from "express";
-import ProductsSchema, { Product } from "./schema";
+import ProductDto from "./product-dto";
+import ProductsSchema from "./schema";
 
 const productsRoute = express.Router();
 
 productsRoute.get("/", async (req, res, next) => {
   try {
     const products = await ProductsSchema.find();
-    const productsList = products.map((product: Product) => ({
-      id: product._id,
+    const productsList = products.map((product: ProductDto) => ({
+      id: product.id,
       product: product.product,
       price: product.price,
       quantity: product.quantity,

@@ -25,10 +25,12 @@
 //Performing a delete request to /products/:id will delete a
 //specifict product by identifier from the database
 
-class ProductDto {
+export default class ProductDto {
   constructor(
+    public id: string,
     public product: string,
     public price: number,
-    public quantity: number
+    public quantity: number,
+    public disponibility: boolean
   ) {}
 }
