@@ -24,3 +24,11 @@
 //HOW TO DELETE A SPECIFIC PRODUCT
 //Performing a delete request to /products/:id will delete a
 //specifict product by identifier from the database
+
+class ProductDto {
+  constructor(
+    public product: string,
+    public price: number,
+    public quantity: number
+  ) {}
+}

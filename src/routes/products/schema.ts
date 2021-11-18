@@ -1,6 +1,13 @@
 import mongoose from "mongoose";
 
-const ProductSchema = new mongoose.Schema(
+export interface Product {
+  _id: any;
+  product: string;
+  price: number;
+  quantity: number;
+}
+
+const ProductSchema = new mongoose.Schema<Product>(
   {
     product: {
       type: String,

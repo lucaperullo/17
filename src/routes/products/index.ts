@@ -1,17 +1,17 @@
-import express from "express";
-import ProductsSchema from "./schema";
+import * as express from "express";
+import ProductsSchema, { Product } from "./schema";
 
 const productsRoute = express.Router();
 
 productsRoute.get("/", async (req, res, next) => {
   try {
     const products = await ProductsSchema.find();
-    const productsList = products.map((product) => ({
+    const productsList = products.map((product: Product) => ({
       id: product._id,
       product: product.product,
       price: product.price,
       quantity: product.quantity,
-      disponibility: product.quantity > 0 ? "available" : "not available",
+      disponibility: product.quantity > 0 ? "available" : "out of stock",
     }));
     res.send({ products: productsList });
   } catch (error) {

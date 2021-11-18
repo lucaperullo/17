@@ -1,6 +1,6 @@
 import express from "express";
-import listEndpoints from "express-list-endpoints";
 import mongoose from "mongoose";
+import listEndpoints from "express-list-endpoints";
 import {
   badRequestErrorHandler,
   forbiddenErrorHandler,
@@ -20,16 +20,16 @@ app.use(notFoundErrorHandler);
 
 const PORT = process.env.PORT || 3000;
 
-mongoose
-  .connect(process.env.MONGO_ATLAS_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(
-    app.listen(
-      PORT,
-      () =>
-        console.log(`Listening on port ${PORT}`) +
-        console.table(listEndpoints(app))
-    )
-  );
+async function start() {
+  try {
+    await mongoose.connect(process.env.MONGO_ATLAS_URI);
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+      console.log(listEndpoints(app));
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+start();

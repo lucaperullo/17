@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "lib": ["es2021"],
+    "module": "ES2020",
+    "esModuleInterop": true,
+    "target": "es2020",
+    "noImplicitAny": true,
+
+    "moduleResolution": "Node",
+
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "outDir": "dist",
+    "paths": {
+      "*": ["./node_modules/*", "./src/types/*"]
+    }
+  },
+  "include": ["src/**/*"]
+}
