@@ -1,12 +1,21 @@
 //PRODUCTS DTO
 
-//HOW TO GET ALL THE PRODUCTS
+//HOW TO GET ALL THE PRODUCTS INFORMATIONS
 //Performing a get request to /products will print
 //all products from the database and return them as a json object to the client
 
-//HOW TO GET A SPECIFIC PRODUCT
+//HOW TO GET OF A SPECIFIC PRODUCT INFORMATIONS
 //Performing a get request to /products/:id will print
 //a specific product from the database and return it as a json object to the client
+
+//HOW TO ADD NEW STOCKS FOR A PRODUCT
+//Performing a post request to /products/:id/add-stock will add
+//the new value to the 'quantity' of a specific product and return the updated product
+//as a json object to the client
+
+//HOW TO SELL A PRODUCT TO THE CUSTOMER
+//Performing a put request to /products/:id/sell will print
+//a specific product from the database and return it as a json object to the client with the new quantity
 
 //HOW TO CREATE A NEW PRODUCT
 //Performing a post request to /products adds a new product

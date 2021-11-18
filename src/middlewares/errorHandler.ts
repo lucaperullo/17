@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 export const notFoundErrorHandler = (
   err: any,
-  req: Request,
+  _req: Request,
   res: Response,
   next: NextFunction
 ) => {
@@ -15,7 +15,7 @@ export const notFoundErrorHandler = (
 
 export const badRequestErrorHandler = (
   err: any,
-  req: Request,
+  _req: Request,
   res: Response,
   next: NextFunction
 ) => {
@@ -28,7 +28,7 @@ export const badRequestErrorHandler = (
 
 export const unauthorizedErrorHandler = (
   err: any,
-  req: Request,
+  _req: Request,
   res: Response,
   next: NextFunction
 ) => {
@@ -41,7 +41,7 @@ export const unauthorizedErrorHandler = (
 
 export const forbiddenErrorHandler = (
   err: any,
-  req: Request,
+  _req: Request,
   res: Response,
   next: NextFunction
 ) => {
@@ -54,9 +54,9 @@ export const forbiddenErrorHandler = (
 
 export const catchAllErrorHandler = (
   err: any,
-  req: Request,
+  _req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) => {
   if (err.statusCode === 500) {
     res.status(500).send("Generic Server Error");
