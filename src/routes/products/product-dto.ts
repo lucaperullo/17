@@ -28,7 +28,7 @@
 export default class ProductDto {
   constructor(
     public id: string,
-    public product: string,
+    public name: string,
     public price: number,
     public quantity: number,
     public disponibility: boolean

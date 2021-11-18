@@ -3,7 +3,7 @@ import ProductDto from "./product-dto";
 
 const ProductSchema = new mongoose.Schema<ProductDto>(
   {
-    product: {
+    name: {
       type: String,
       required: true,
     },
