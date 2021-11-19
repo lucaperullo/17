@@ -14,11 +14,11 @@ export const checkPrice = (req: any, res: any, next: any) => {
         .isFloat({ min: 0.99 })
         .isInt({ min: 0.99 }),
     ]);
-    const errors = validationResult(req.body.price);
+    const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.send(errors.array()[0].msg);
     } else {
-      next();
+      next(req);
     }
   } catch (error) {
     console.log(error);
@@ -38,9 +38,9 @@ export const checkName = (req: any, res: any, next: any) => {
           min: 3,
         }),
     ]);
-    const errors = validationResult(req.body.name);
+    const errors = validationResult(req);
     if (errors.isEmpty()) {
-      next();
+      next(req);
     } else {
       res.send(errors.array()[0].msg);
     }
@@ -68,9 +68,9 @@ export const checkQuantity = (req: any, res: any, next: any) => {
           max: 5000,
         }),
     ]);
-    const errors = validationResult(req.body.quantity);
+    const errors = validationResult(req);
     if (errors.isEmpty()) {
-      next(null);
+      next(req);
     } else {
       res.send(errors.array()[0].msg);
     }
@@ -94,9 +94,9 @@ export const checkId = (req: any, res: any, next: any) => {
         })
         .withMessage("The id must be 24 characters long"),
     ]);
-    const errors = validationResult(req.params.id);
+    const errors = validationResult(req);
     if (errors.isEmpty()) {
-      next();
+      next(req);
     } else {
       res.send(errors.array()[0].msg);
     }
@@ -141,10 +141,10 @@ export const checkAll = async (req: any, res: any, next: any) => {
         }),
     ]);
     console.log("checks done");
-    const errors = validationResult(req.body);
+    const errors = validationResult(req);
 
     if (errors.isEmpty()) {
-      next();
+      next(req);
     } else {
       res.send(errors.array()[0].msg);
     }
