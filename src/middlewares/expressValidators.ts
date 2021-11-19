@@ -1,5 +1,7 @@
 import { check, oneOf, validationResult } from "express-validator";
 
+//TESTING
+
 export const checkPrice = (req: any, res: any, next: any) => {
   try {
     console.log("checking");
