@@ -1,75 +1,42 @@
 import express from "express";
 import { check, oneOf, validationResult } from "express-validator";
 import _ from "lodash";
+import {
+  checkAll,
+  checkId,
+  checkName,
+  checkPrice,
+  checkQuantity,
+} from "../../middlewares/expressValidators";
 
 import ProductDto from "./product-dto";
 import ProductsSchema from "./schema";
 
 const productsRoute = express.Router();
 
-productsRoute.post(
-  "/",
-  oneOf([
-    [
-      check([
-        "name",
-        "You must provide a name for the product of minimum 3 characters.❗",
-      ])
-        .exists()
-        .isLength({
-          min: 3,
-        }),
-      check([
-        "quantity",
-        "You must provide a quantity wich is between 0 and 5000 units for a product.",
-      ])
-        .exists()
-        .isInt({
-          min: 0,
-          max: 5000,
-        })
-        .isFloat({
-          min: 0,
-          max: 5000,
-        }),
-    ],
-    check([
-      "price",
-      "The price value must be of minimum 0.99 with no limits for its maximum",
-    ])
-      .exists()
-      .isInt({
-        min: 0.99,
-      }),
-  ]),
-  async (req, res, next) => {
-    try {
-      if (validationResult(req).isEmpty()) {
-        const { name, price, quantity }: ProductDto = req.body;
-        const productToPost = await new ProductsSchema({
-          name,
-          price,
-          quantity,
-        }).save();
+productsRoute.post("/", checkAll, async (req, res, next) => {
+  try {
+    const { name, price, quantity }: ProductDto = req.body;
+    const productToPost = await new ProductsSchema({
+      name,
+      price,
+      quantity,
+    }).save();
 
-        res.status(201).send({
-          message: "Product created successfully 🔵🟠🟡",
-          product: _.pick(productToPost, [
-            "id",
-            "name",
-            "price",
-            "quantity",
-          ]) as ProductDto,
-        });
-      } else {
-        res.status(400).send(validationResult(req).array());
-      }
-    } catch (error) {
-      console.log(error);
-      next(error);
-    }
+    res.status(201).send({
+      message: "Product created successfully 🔵🟠🟡",
+      product: _.pick(productToPost, [
+        "id",
+        "name",
+        "price",
+        "quantity",
+      ]) as ProductDto,
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
   }
-);
+});
 
 productsRoute.get("/", async (_req, res, next) => {
   try {
@@ -118,39 +85,30 @@ productsRoute.get("/:id", async (req, res, next) => {
 
 productsRoute.put(
   "/:id",
-  oneOf([
-    [check("name").exists(), check("quantity").exists()],
-    check(["price", "The price must be from 0.99"]).exists(),
-  ]),
+  checkQuantity,
+  checkPrice,
+  checkId,
   async (req, res, next) => {
     try {
-      if (validationResult(req.body).isEmpty()) {
-        await ProductsSchema.findByIdAndUpdate(req.params.id, {
-          $set: {
-            name: req.body.name,
-            price: req.body.price,
-            quantity: req.body.quantity,
-          },
-        });
+      await ProductsSchema.findByIdAndUpdate(req.params.id, {
+        $set: {
+          name: req.body.name,
+          price: req.body.price,
+          quantity: req.body.quantity,
+        },
+      });
 
-        res.send({
-          message: "Product updated successfully 🟢",
-          product: _.pick(req.body, [
-            "name",
-            "price",
-            "quantity",
-          ]) as ProductDto,
-          // product: {
-          //   id: req.body._id,
-          //   name: req.body.name,
-          //   price: req.body.price,
-          //   quantity: parseInt(req.body.quantity),
-          //   disponibility: parseInt(req.body.quantity) > 0 ? true : false,
-          // },
-        });
-      } else {
-        res.status(400).send(validationResult(req).array());
-      }
+      res.send({
+        message: "Product updated successfully 🟢",
+        product: _.pick(req.body, ["name", "price", "quantity"]) as ProductDto,
+        // product: {
+        //   id: req.body._id,
+        //   name: req.body.name,
+        //   price: req.body.price,
+        //   quantity: parseInt(req.body.quantity),
+        //   disponibility: parseInt(req.body.quantity) > 0 ? true : false,
+        // },
+      });
     } catch (error) {
       console.log(error);
       next(error);
