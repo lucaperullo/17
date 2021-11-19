@@ -7,6 +7,70 @@ import ProductsSchema from "./schema";
 
 const productsRoute = express.Router();
 
+productsRoute.post(
+  "/",
+  oneOf([
+    [
+      check([
+        "name",
+        "You must provide a name for the product of minimum 3 characters.❗",
+      ])
+        .exists()
+        .isLength({
+          min: 3,
+        }),
+      check([
+        "quantity",
+        "You must provide a quantity wich is between 0 and 5000 units for a product.",
+      ])
+        .exists()
+        .isInt({
+          min: 0,
+          max: 5000,
+        })
+        .isFloat({
+          min: 0,
+          max: 5000,
+        }),
+    ],
+    check([
+      "price",
+      "The price value must be of minimum 0.99 with no limits for its maximum",
+    ])
+      .exists()
+      .isInt({
+        min: 0.99,
+      }),
+  ]),
+  async (req, res, next) => {
+    try {
+      if (validationResult(req).isEmpty()) {
+        const { name, price, quantity }: ProductDto = req.body;
+        const productToPost = await new ProductsSchema({
+          name,
+          price,
+          quantity,
+        }).save();
+
+        res.status(201).send({
+          message: "Product created successfully 🔵🟠🟡",
+          product: _.pick(productToPost, [
+            "id",
+            "name",
+            "price",
+            "quantity",
+          ]) as ProductDto,
+        });
+      } else {
+        res.status(400).send(validationResult(req).array());
+      }
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+);
+
 productsRoute.get("/", async (_req, res, next) => {
   try {
     const products = await ProductsSchema.find();
@@ -17,7 +81,14 @@ productsRoute.get("/", async (_req, res, next) => {
       quantity: product.quantity,
       disponibility: product.quantity > 0 ? "available" : "out of stock",
     }));
-    res.send({ products: productsList });
+    const message = () => {
+      if (productsList.length === 0) {
+        return "No products found ⭕";
+      }
+      return "A list of the procts were found 🔵";
+    };
+    const prods = _.orderBy(productsList, ["name"], ["asc"]);
+    res.send({ message: message(), products: prods });
   } catch (error) {
     console.log(error);
     next(error);
@@ -36,7 +107,8 @@ productsRoute.get("/:id", async (req, res, next) => {
     };
 
     res.send({
-      products: [selectedProduct],
+      message: "Product found 🔵",
+      product: [selectedProduct],
     });
   } catch (error) {
     console.log(error);
@@ -48,7 +120,7 @@ productsRoute.put(
   "/:id",
   oneOf([
     [check("name").exists(), check("quantity").exists()],
-    check("price").exists(),
+    check(["price", "The price must be from 0.99"]).exists(),
   ]),
   async (req, res, next) => {
     try {
@@ -62,7 +134,7 @@ productsRoute.put(
         });
 
         res.send({
-          message: "Product updated successfully",
+          message: "Product updated successfully 🟢",
           product: _.pick(req.body, [
             "name",
             "price",
@@ -86,55 +158,17 @@ productsRoute.put(
   }
 );
 
-productsRoute.post(
-  "/",
-  oneOf([
-    [
-      check([
-        "name",
-        "You must provide a name for the product of minimum 3 characters",
-      ])
-        .exists()
-        .isLength({
-          min: 3,
-        }),
-      check("quantity").exists().isInt({
-        min: 1,
-      }),
-    ],
-    check("price").exists().isInt({
-      min: 1,
-    }),
-  ]),
-  async (req, res, next) => {
-    try {
-      if (validationResult(req).isEmpty()) {
-        const { name, price, quantity }: ProductDto = req.body;
-        const productToPost = await new ProductsSchema({
-          name,
-          price,
-          quantity,
-        }).save();
-
-        res.status(201).send(productToPost);
-      } else {
-        res.status(400).send(validationResult(req).array());
-      }
-    } catch (error) {
-      console.log(error);
-      next(error);
-    }
-  }
-);
-
 productsRoute.put(
   "/:id/add-stock",
 
-  check("quantity", "quantity must be at least of 10").isLength({ min: 2 }),
-
+  check("quantity", "The minimum quantity value must be at least of 10.")
+    .isLength({ min: 2 })
+    .isInt({
+      min: 10,
+    }),
   async (req, res, next) => {
     try {
-      if (validationResult(req).isEmpty()) {
+      if (validationResult(req.body).isEmpty()) {
         const { quantity } = req.body;
         const productToUpdate = await ProductsSchema.findByIdAndUpdate(
           req.params.id,
@@ -147,7 +181,15 @@ productsRoute.put(
           quantity:
             parseInt(productToUpdate.quantity.toString()) + parseInt(quantity),
         };
-        res.status(202).send(updatedProduct);
+        res.status(202).send({
+          message: "Product updated successfully 🟢",
+          product: _.pick(updatedProduct, [
+            "id",
+            "name",
+            "price",
+            "quantity",
+          ]) as ProductDto,
+        });
       } else {
         res.status(400).send(validationResult(req).array());
       }
@@ -160,7 +202,7 @@ productsRoute.put(
 
 productsRoute.put(
   "/:id/sell",
-  check("quantity").exists(),
+  check(["quantity"]).exists(),
   async (req, res, next) => {
     try {
       if (validationResult(req).isEmpty()) {
@@ -176,7 +218,15 @@ productsRoute.put(
           quantity:
             parseInt(productToUpdate.quantity.toString()) - parseInt(quantity),
         };
-        res.status(202).send(updatedProduct);
+        res.status(202).send({
+          message: "Product updated successfully 🟢",
+          product: _.pick(updatedProduct, [
+            "id",
+            "name",
+            "price",
+            "quantity",
+          ]) as ProductDto,
+        });
       } else {
         res.status(400).send(validationResult(req).array());
       }
@@ -190,7 +240,7 @@ productsRoute.put(
 productsRoute.delete("/all", async (_req, res, next) => {
   try {
     await ProductsSchema.deleteMany();
-    res.send({ message: "All products were deleted" });
+    res.send({ message: "All products were deleted from your database 🔴" });
   } catch (error) {
     console.log(error);
     next(error);
@@ -203,7 +253,7 @@ productsRoute.delete("/:id", async (req, res, next) => {
     const products = await ProductsSchema.find();
     if (product) {
       res.send({
-        message: "Product deleted successfully!",
+        message: "Product deleted successfully from your database 🔴",
         products: products,
       });
     }
