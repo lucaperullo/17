@@ -1,7 +1,7 @@
 import express from "express";
 import { check, oneOf, validationResult } from "express-validator";
 import _ from "lodash";
-import pick from "lodash/pick";
+
 import ProductDto from "./product-dto";
 import ProductsSchema from "./schema";
 
@@ -52,8 +52,8 @@ productsRoute.put(
   ]),
   async (req, res, next) => {
     try {
-      if (validationResult(req).isEmpty()) {
-        const product = await ProductsSchema.findByIdAndUpdate(req.params.id, {
+      if (validationResult(req.body).isEmpty()) {
+        await ProductsSchema.findByIdAndUpdate(req.params.id, {
           $set: {
             name: req.body.name,
             price: req.body.price,
@@ -89,8 +89,22 @@ productsRoute.put(
 productsRoute.post(
   "/",
   oneOf([
-    [check("name").exists(), check("quantity").exists()],
-    check("price").exists(),
+    [
+      check([
+        "name",
+        "You must provide a name for the product of minimum 3 characters",
+      ])
+        .exists()
+        .isLength({
+          min: 3,
+        }),
+      check("quantity").exists().isInt({
+        min: 1,
+      }),
+    ],
+    check("price").exists().isInt({
+      min: 1,
+    }),
   ]),
   async (req, res, next) => {
     try {
@@ -183,10 +197,16 @@ productsRoute.delete("/all", async (_req, res, next) => {
   }
 });
 
-productsRoute.delete("/:id", async (_req, res, next) => {
+productsRoute.delete("/:id", async (req, res, next) => {
   try {
+    const product = await ProductsSchema.findByIdAndDelete(req.params.id);
     const products = await ProductsSchema.find();
-    res.send({ message: "product deleted", products: products });
+    if (product) {
+      res.send({
+        message: "Product deleted successfully!",
+        products: products,
+      });
+    }
   } catch (error) {
     console.log(error);
     next(error);

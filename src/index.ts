@@ -25,7 +25,7 @@ async function start() {
     await mongoose.connect(process.env.MONGO_ATLAS_URI);
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
-      console.log(listEndpoints(app));
+      console.table(listEndpoints(app));
     });
   } catch (e) {
     console.log(e);
