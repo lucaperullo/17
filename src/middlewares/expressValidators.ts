@@ -1,7 +1,12 @@
+import { Response } from "express";
 import { body, check, oneOf, validationResult } from "express-validator";
 import { Request } from "express-validator/src/base";
 
-export const checkPrice = async (req: any, res: any, next: any) => {
+export const checkPrice = async (
+  req: Request,
+  res: Response,
+  next: () => void
+) => {
   await check(
     "price",
     "The price value must be of minimum 0.99 with no limits for its maximum"
@@ -53,7 +58,11 @@ export const checkName = async (
   }
 };
 
-export const checkQuantity = async (req: any, res: any, next: any) => {
+export const checkQuantity = async (
+  req: Request,
+  res: Response,
+  next: (arg0: any) => void
+) => {
   await check(
     "quantity",
     "You must provide a quantity wich is between 0 and 5000 units for a product."
@@ -80,7 +89,11 @@ export const checkQuantity = async (req: any, res: any, next: any) => {
   }
 };
 
-export const checkId = async (req: any, res: any, next: any) => {
+export const checkId = async (
+  req: Request,
+  res: Response,
+  next: () => void
+) => {
   oneOf([
     check("id", "You must provide a valid id for the product.")
       .exists({ checkNull: true, checkFalsy: true })
@@ -102,7 +115,11 @@ export const checkId = async (req: any, res: any, next: any) => {
   }
 };
 
-export const checkAll = async (req: any, res: any, next: any) => {
+export const checkAll = async (
+  req: Request,
+  res: Response,
+  next: () => void
+) => {
   console.log(req.body);
   await check(
     "name",
