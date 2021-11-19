@@ -12,8 +12,6 @@ export const checkPrice = async (
     "The price value must be of minimum 0.99 with no limits for its maximum"
   )
     .exists({ checkFalsy: true, checkNull: true })
-    .isFloat({ min: 0.99 })
-    .isInt({ min: 0.99 })
     .run(req);
 
   const errors = validationResult(req);
