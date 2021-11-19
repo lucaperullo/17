@@ -1,155 +1,149 @@
-import { check, oneOf, validationResult } from "express-validator";
+import { body, check, oneOf, validationResult } from "express-validator";
+import { Request } from "express-validator/src/base";
 
-//TESTING
+export const checkPrice = async (req: any, res: any, next: any) => {
+  await check(
+    "price",
+    "The price value must be of minimum 0.99 with no limits for its maximum"
+  )
+    .exists({ checkFalsy: true, checkNull: true })
+    .isFloat({ min: 0.99 })
+    .isInt({ min: 0.99 })
+    .run(req);
 
-export const checkPrice = (req: any, res: any, next: any) => {
-  try {
-    console.log("checking");
-    oneOf([
-      check("price")
-        .exists({ checkFalsy: true, checkNull: true })
-        .withMessage(
-          "The price value must be of minimum 0.99 with no limits for its maximum"
-        )
-        .isFloat({ min: 0.99 })
-        .isInt({ min: 0.99 }),
-    ]);
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.send(errors.array()[0].msg);
-    } else {
-      next(req);
-    }
-  } catch (error) {
-    console.log(error);
-    next(error);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(400).json({
+      status: 400,
+      error: errors.array()[0].msg,
+    });
+  } else {
+    next();
   }
 };
-export const checkName = (req: any, res: any, next: any) => {
-  try {
-    console.log("checking");
-    oneOf([
-      check("name")
-        .exists({ checkFalsy: true })
-        .withMessage(
-          "You must provide a name for the product of minimum 3 characters.❗"
-        )
-        .isLength({
-          min: 3,
-        }),
-    ]);
-    const errors = validationResult(req);
-    if (errors.isEmpty()) {
-      next(req);
-    } else {
-      res.send(errors.array()[0].msg);
-    }
-  } catch (error) {
-    console.log(error);
-    next(error);
-  }
-};
+export const checkName = async (
+  req: { body: { name: Request } },
+  res: {
+    status: (arg0: number) => {
+      (): any;
+      new (): any;
+      json: { (arg0: { status: number; error: any }): void; new (): any };
+    };
+  },
+  next: () => void
+) => {
+  await check(
+    "name",
+    "You must provide a name for the product of minimum 3 characters.❗"
+  )
+    .exists({ checkNull: true, checkFalsy: true })
+    .isLength({
+      min: 3,
+    })
+    .run(req);
 
-export const checkQuantity = (req: any, res: any, next: any) => {
-  try {
-    console.log("checking");
-    oneOf([
-      check("quantity")
-        .exists({ checkFalsy: true })
-        .withMessage(
-          "You must provide a quantity wich is between 0 and 5000 units for a product."
-        )
-        .isInt({
-          min: 0,
-          max: 5000,
-        })
-        .isFloat({
-          min: 0,
-          max: 5000,
-        }),
-    ]);
-    const errors = validationResult(req);
-    if (errors.isEmpty()) {
-      next(req);
-    } else {
-      res.send(errors.array()[0].msg);
-    }
-  } catch (error) {
-    console.log(error);
-    next(error);
+  const errors = validationResult(req);
+  if (errors.isEmpty()) {
+    next();
+  } else {
+    res.status(400).json({
+      status: 400,
+      error: errors.array()[0].msg,
+    });
   }
 };
 
-export const checkId = (req: any, res: any, next: any) => {
-  try {
-    console.log("checking");
-    oneOf([
-      check("id")
-        .exists({ checkFalsy: true })
-        .withMessage("You must provide a valid id for the product.")
-        .isMongoId()
-        .isLength({
-          min: 24,
-          max: 24,
-        })
-        .withMessage("The id must be 24 characters long"),
-    ]);
-    const errors = validationResult(req);
-    if (errors.isEmpty()) {
-      next(req);
-    } else {
-      res.send(errors.array()[0].msg);
-    }
-  } catch (error) {
-    console.log(error);
-    next(error);
+export const checkQuantity = async (req: any, res: any, next: any) => {
+  await check(
+    "quantity",
+    "You must provide a quantity wich is between 0 and 5000 units for a product."
+  )
+    .exists({ checkNull: true, checkFalsy: true })
+    .isInt({
+      min: 0,
+      max: 5000,
+    })
+    .isFloat({
+      min: 0,
+      max: 5000,
+    })
+    .run(req);
+
+  const errors = validationResult(req);
+  if (errors.isEmpty()) {
+    next(req);
+  } else {
+    res.status(400).json({
+      status: 400,
+      error: errors.array()[0].msg,
+    });
+  }
+};
+
+export const checkId = async (req: any, res: any, next: any) => {
+  oneOf([
+    check("id", "You must provide a valid id for the product.")
+      .exists({ checkNull: true, checkFalsy: true })
+      .isMongoId()
+      .isLength({
+        min: 24,
+        max: 24,
+      })
+      .withMessage("The id must be 24 characters long"),
+  ]).run(req.params.id);
+  const errors = validationResult(req.params.id);
+  if (errors.isEmpty()) {
+    next();
+  } else {
+    res.status(400).json({
+      status: 400,
+      error: errors.array()[0].msg,
+    });
   }
 };
 
 export const checkAll = async (req: any, res: any, next: any) => {
-  try {
-    console.log("checking");
-    oneOf([
-      check("name")
-        .exists({ checkFalsy: true })
-        .withMessage(
-          "You must provide a name for the product of minimum 3 characters.❗"
-        )
-        .isLength({
-          min: 3,
-        }),
-      check("price")
-        .exists({ checkFalsy: true })
-        .withMessage(
-          "The price value must be of minimum 0.99 with no limits for its maximum"
-        )
-        .isFloat({ min: 0.99 })
-        .isInt({ min: 0.99 }),
+  console.log(req.body);
+  await check(
+    "name",
+    "You must provide a name for the product of minimum 3 characters.❗"
+  )
+    .exists({ checkNull: true, checkFalsy: true })
+    .isLength({
+      min: 3,
+    })
+    .run(req),
+    await check(
+      "price",
+      "The price value must be of minimum 0.99 with no limits for its maximum"
+    )
+      .exists({ checkNull: true, checkFalsy: true })
 
-      check("quantity")
-        .exists({ checkFalsy: true })
-        .withMessage(
-          "You must provide a quantity wich is between 0 and 5000 units for a product."
-        )
-        .isInt({
-          min: 0,
-          max: 5000,
-        })
-        .isFloat({
-          min: 0,
-          max: 5000,
-        }),
-    ]);
-    console.log("checks done");
-    const errors = validationResult(req);
+      .run(req),
+    await check(
+      "quantity",
+      "You must provide a quantity wich is between 0 and 5000 units for a product."
+    )
+      .exists({ checkNull: true, checkFalsy: true })
+      .isInt({
+        min: 0,
+        max: 5000,
+      })
+      .isFloat({
+        min: 0,
+        max: 5000,
+      })
+      .run(req);
 
-    if (errors.isEmpty()) {
-      next(req);
-    } else {
-      res.send(errors.array()[0].msg);
-    }
-  } catch (error) {
-    console.log(error);
-    next(error);
+  const errors = validationResult(req);
+
+  if (errors.isEmpty()) {
+    console.log(errors.isEmpty());
+    next();
+  } else {
+    res.status(400).json({
+      status: 400,
+      error: errors.array()[0].msg,
+    });
   }
 };

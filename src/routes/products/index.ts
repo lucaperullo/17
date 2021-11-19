@@ -16,6 +16,7 @@ const productsRoute = express.Router();
 
 productsRoute.post("/", checkAll, async (req, res, next) => {
   try {
+    console.log(req.body);
     const { name, price, quantity }: ProductDto = req.body;
     const productToPost = await new ProductsSchema({
       name,

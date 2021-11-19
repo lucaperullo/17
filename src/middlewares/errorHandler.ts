@@ -59,7 +59,6 @@ export const catchAllErrorHandler = (
   _next: NextFunction
 ) => {
   if (err.statusCode === 500) {
-    res.status(500).send("Generic Server Error");
-    console.log(err);
+    res.status(500).send(err.message || "Generic Server Error");
   }
 };
