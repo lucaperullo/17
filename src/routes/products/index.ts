@@ -1,5 +1,5 @@
 import express from "express";
-import { check, oneOf, validationResult } from "express-validator";
+import { check, validationResult } from "express-validator";
 import _ from "lodash";
 import {
   checkAll,
