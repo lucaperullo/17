@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import listEndpoints from "express-list-endpoints";
+import cors from "cors";
 import {
   badRequestErrorHandler,
   forbiddenErrorHandler,
@@ -10,8 +11,13 @@ import {
 import productsRoute from "./routes/products";
 
 const app = express();
+const corsOptions = {
+  origin: "http://localhost:3000",
+  optionsSuccessStatus: 200,
+};
 
 app.use(express.json());
+app.use(cors(corsOptions));
 app.use("/products", productsRoute);
 app.use(badRequestErrorHandler);
 app.use(forbiddenErrorHandler);
