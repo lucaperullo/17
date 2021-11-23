@@ -2,6 +2,55 @@
 
 import UserDto from "../authentication/authentication-dto";
 
+// To get all products, make a GET request to the following URL: /product/all
+// The response should be a JSON array with the following fields:
+//
+// id: The id of the product.
+// userId: The id of the user that created the product.
+// name: The name of the product.
+// price: The price of the product.
+// quantity: The quantity of the product.
+//
+// If no products are found, the response should be a JSON object with the following fields:
+//
+// message: The message that should be displayed to the user.
+//
+// To get a product, make a GET request to the following URL: /product/:id
+// The response should be a JSON object with the following fields:
+//
+// id: The id of the product.
+// userId: The id of the user that created the product.
+// name: The name of the product.
+// price: The price of the product.
+// quantity: The quantity of the product.
+//
+// If the product is not found, the response should be a JSON object with the following fields:
+//
+// message: The message that should be displayed to the user.
+//
+// To update a product, make a PUT request to the following URL: /product/:id
+// The body of the request should be a JSON object with the following fields:
+//
+// name: The name of the product.
+// price: The price of the product.
+// quantity: The quantity of the product.
+//
+// The response should be a JSON object with the following fields:
+//
+// message: The message that should be displayed to the user.
+//
+// If the product is not found, the response should be a JSON object with the following fields:
+//
+// message: The message that should be displayed to the user.
+// errors: An array of error messages that should be displayed to the user.
+//
+// To delete a product, make a DELETE request to the following URL: /product/:id
+// The response should be a JSON object with the following fields:
+//
+// message: The message that should be displayed to the user.
+//
+// If the product is not found, the response should be a JSON object with the following fields:
+
 //HOW TO GET ALL THE PRODUCTS INFORMATIONS
 //Performing a get request to /products will print
 //all products from the database and return them as a json object to the client
