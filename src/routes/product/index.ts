@@ -69,9 +69,7 @@ productsRoute.get("/", async (req, res, next) => {
 
 productsRoute.get("/:id", async (req, res, next) => {
   try {
-    const product = await ProductsSchema.findById(req.params.id).populate({
-      userId: "userId",
-    });
+    const product = await ProductsSchema.findById(req.params.id);
     const selectedProduct: ProductDto = {
       userId: product.userId,
       id: product._id,

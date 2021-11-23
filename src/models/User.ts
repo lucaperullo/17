@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import UserDto from "../routes/authentication/authentication-dto";
-
+import bycript from "bcrypt";
 const { Schema } = mongoose;
 
 const validateEmail = (email: string) => {
@@ -42,6 +42,12 @@ const UserSchema = new Schema<UserDto>({
       "https://www.pngall.com/wp-content/uploads/5/Profile-Avatar-PNG.png",
   },
   products: [{ type: Schema.Types.ObjectId, ref: "Product" }],
+});
+
+UserSchema.pre("save", async function (next) {
+  const salt = await bycript.genSalt(10);
+  this.password = await bycript.hash(this.password, salt);
+  next();
 });
 
 export default mongoose.model("User", UserSchema);
