@@ -128,6 +128,10 @@ export const checkAll = async (
       min: 3,
     })
     .run(req),
+    await check("imgUrl", "You must provide an image URL for the product.❗")
+      .exists({ checkNull: true, checkFalsy: true })
+      .isURL()
+      .run(req),
     await check(
       "price",
       "The price value must be of minimum 0.99 with no limits for its maximum"

@@ -10,17 +10,19 @@ import {
 } from "../../middlewares/expressValidators";
 
 import ProductDto from "./product-dto";
-import ProductsSchema from "./schema";
+import ProductsSchema from "../../models/Product";
 
 const productsRoute = express.Router();
 
-productsRoute.post("/", checkAll, async (req, res, next) => {
+productsRoute.post("/", checkAll, async (req: any, res, next) => {
   try {
-    console.log(req.body);
-    const { name, price, quantity }: ProductDto = req.body;
+    const { name, price, quantity, imgUrl }: ProductDto = req.body;
+    const userId = req.userId;
     const productToPost = await new ProductsSchema({
+      userId,
       name,
       price,
+      imgUrl,
       quantity,
     }).save();
 
@@ -39,13 +41,15 @@ productsRoute.post("/", checkAll, async (req, res, next) => {
   }
 });
 
-productsRoute.get("/", async (_req, res, next) => {
+productsRoute.get("/", async (req, res, next) => {
   try {
     const products = await ProductsSchema.find();
     const productsList = products.map((product: ProductDto) => ({
+      userId: product?.userId,
       id: product.id,
       name: product.name,
       price: product.price,
+      imgUrl: product.imgUrl,
       quantity: product.quantity,
       disponibility: product.quantity > 0 ? "available" : "out of stock",
     }));
@@ -65,11 +69,15 @@ productsRoute.get("/", async (_req, res, next) => {
 
 productsRoute.get("/:id", async (req, res, next) => {
   try {
-    const product = await ProductsSchema.findById(req.params.id);
+    const product = await ProductsSchema.findById(req.params.id).populate({
+      userId: "userId",
+    });
     const selectedProduct: ProductDto = {
+      userId: product.userId,
       id: product._id,
       name: product.name,
       price: product.price,
+      imgUrl: product.imgUrl,
       quantity: product.quantity,
       disponibility: product.quantity > 0 ? true : false,
     };
@@ -95,13 +103,19 @@ productsRoute.put(
         $set: {
           name: req.body.name,
           price: req.body.price,
+          imgUrl: req.body.imgUrl,
           quantity: req.body.quantity,
         },
       });
 
       res.send({
         message: "Product updated successfully 🟢",
-        product: _.pick(req.body, ["name", "price", "quantity"]) as ProductDto,
+        product: _.pick(req.body, [
+          "name",
+          "price",
+          "quantity",
+          "imgUrl",
+        ]) as ProductDto,
         // product: {
         //   id: req.body._id,
         //   name: req.body.name,
@@ -137,6 +151,7 @@ productsRoute.put(
           _id: productToUpdate._id,
           name: productToUpdate.name,
           price: productToUpdate.price,
+          imgUrl: productToUpdate.imgUrl,
           quantity:
             parseInt(productToUpdate.quantity.toString()) + parseInt(quantity),
         };
@@ -147,6 +162,7 @@ productsRoute.put(
             "name",
             "price",
             "quantity",
+            "imgUrl",
           ]) as ProductDto,
         });
       } else {

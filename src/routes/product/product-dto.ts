@@ -1,5 +1,7 @@
 //PRODUCTS DTO
 
+import UserDto from "../authentication/authentication-dto";
+
 //HOW TO GET ALL THE PRODUCTS INFORMATIONS
 //Performing a get request to /products will print
 //all products from the database and return them as a json object to the client
@@ -36,10 +38,12 @@
 
 export default class ProductDto {
   constructor(
+    public userId: UserDto,
     public id: string,
     public name: string,
     public price: number,
     public quantity: number,
-    public disponibility: boolean
+    public disponibility: boolean,
+    public imgUrl: string
   ) {}
 }

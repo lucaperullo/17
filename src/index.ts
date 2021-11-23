@@ -8,7 +8,9 @@ import {
   notFoundErrorHandler,
   unauthorizedErrorHandler,
 } from "./middlewares/errorHandler";
-import productsRoute from "./routes/products";
+import productsRoute from "./routes/product";
+import auth from "./routes/authentication";
+import verifyToken from "./middlewares/authValidation";
 
 const app = express();
 const corsOptions = {
@@ -18,7 +20,8 @@ const corsOptions = {
 
 app.use(express.json());
 app.use(cors(corsOptions));
-app.use("/products", productsRoute);
+app.use("/products", verifyToken, productsRoute);
+app.use("/user", auth);
 app.use(badRequestErrorHandler);
 app.use(forbiddenErrorHandler);
 app.use(unauthorizedErrorHandler);

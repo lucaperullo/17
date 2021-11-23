@@ -1,8 +1,15 @@
 import mongoose from "mongoose";
-import ProductDto from "./product-dto";
+import ProductDto from "../routes/product/product-dto";
+
+const { Schema } = mongoose;
 
 const ProductSchema = new mongoose.Schema<ProductDto>(
   {
+    userId: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
     name: {
       type: String,
       required: true,
@@ -19,6 +26,10 @@ const ProductSchema = new mongoose.Schema<ProductDto>(
       required: true,
       min: 0,
       max: 5000,
+    },
+    imgUrl: {
+      type: String,
+      required: true,
     },
   },
   { versionKey: false }
